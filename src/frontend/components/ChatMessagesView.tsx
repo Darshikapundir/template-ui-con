@@ -1,7 +1,8 @@
 import type React from "react";
 import type { Message } from "@langchain/langgraph-sdk";
 import { ScrollArea } from "./ui/scroll-area";
-import { CheckCircle, ChevronDown, ChevronRight, Copy, CopyCheck, Loader2, Settings } from "lucide-react";
+import { CheckCircle, ChevronDown, ChevronRight, Copy, CopyCheck, Loader2 } from "lucide-react";
+import { getToolIcon } from "../lib/toolIcons";
 import { InputForm } from "./InputForm";
 import { useState, ReactNode, useMemo } from "react";
 import { cn } from "../lib/utils";
@@ -262,6 +263,7 @@ export function AIMessageRenderer({ message, latestTodos, skipWriteTodos }: AIMe
 
       for (let idx = 0; idx < nonTodoToolCalls.length; idx++) {
         const toolCall = nonTodoToolCalls[idx];
+        const ToolIcon = getToolIcon(toolCall.name);
         elements.push(
           <div key={`${message.id || 'tc'}-${idx}`} className="bg-blue-900/20 border border-blue-700/30 rounded-lg overflow-hidden w-full">
             <button
@@ -269,7 +271,7 @@ export function AIMessageRenderer({ message, latestTodos, skipWriteTodos }: AIMe
               className="w-full flex items-center justify-between p-4 hover:bg-blue-800/20 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Settings className="w-5 h-5 text-blue-400" />
+                <ToolIcon className="w-5 h-5 text-blue-400" />
                 <div className="text-left">
                   <div className="text-sm font-medium text-blue-100 flex items-center gap-2">
                     {toolCall.name}

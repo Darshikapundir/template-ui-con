@@ -2,7 +2,6 @@ import { useState } from "react";
 import { StreamEvent, ToolCall } from "../hooks/useDataStream";
 import {
   Brain,
-  Settings,
   CheckCircle,
   ChevronDown,
   ChevronRight,
@@ -10,6 +9,7 @@ import {
   Play,
   Zap,
 } from "lucide-react";
+import { getToolIcon } from "../lib/toolIcons";
 import ReactMarkdown from "react-markdown";
 
 interface StreamEventRendererProps {
@@ -114,14 +114,16 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
       case 'tool_call':
         const isExpanded = expandedItems.has(event.id);
         return (
-          event.tool_calls?.map((toolCall: ToolCall) => (
+          event.tool_calls?.map((toolCall: ToolCall) => {
+            const ToolIcon = getToolIcon(toolCall.name);
+            return (
             <div key={event.id} className="bg-blue-900/20 border border-blue-700/30 rounded-lg overflow-hidden">
             <button
               onClick={() => toggleExpand(event.id)}
               className="w-full flex items-center justify-between p-4 hover:bg-blue-800/20 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Settings className="w-5 h-5 text-blue-400" />
+                <ToolIcon className="w-5 h-5 text-blue-400" />
                 <div className="text-left">
                   <div className="text-sm font-medium text-blue-100">
                     {toolCall.name}
@@ -147,7 +149,8 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
               </div>
             )}
           </div>
-          ))
+          );
+          })
         );
 
       case 'tool_result':
