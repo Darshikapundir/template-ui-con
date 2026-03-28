@@ -2,7 +2,7 @@ import type React from "react";
 import type { Message } from "@langchain/langgraph-sdk";
 import { ScrollArea } from "./ui/scroll-area";
 import { CheckCircle, ChevronDown, ChevronRight, Copy, CopyCheck, Loader2 } from "lucide-react";
-import { getToolIcon } from "../lib/toolIcons";
+import { getToolIcon, getToolLabel } from "../lib/toolIcons";
 import { InputForm } from "./InputForm";
 import { useState, ReactNode, useMemo } from "react";
 import { cn } from "../lib/utils";
@@ -285,7 +285,7 @@ export function AIMessageRenderer({ message, latestTodos, skipWriteTodos }: AIMe
                   </div>
 
                   <div className="text-xs text-blue-200/60">
-                    Tool execution
+                    {getToolLabel(toolCall.name)}
                   </div>
                 </div>
               </div>

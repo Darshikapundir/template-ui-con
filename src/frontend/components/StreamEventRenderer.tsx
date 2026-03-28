@@ -9,7 +9,7 @@ import {
   Play,
   Zap,
 } from "lucide-react";
-import { getToolIcon } from "../lib/toolIcons";
+import { getToolIcon, getToolLabel } from "../lib/toolIcons";
 import ReactMarkdown from "react-markdown";
 
 interface StreamEventRendererProps {
@@ -129,7 +129,7 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
                     {toolCall.name}
                   </div>
                   <div className="text-xs text-blue-200/60">
-                    Tool execution
+                    {getToolLabel(toolCall.name)}
                   </div>
                 </div>
               </div>

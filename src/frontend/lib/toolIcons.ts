@@ -23,3 +23,14 @@ const toolIconMap: Record<string, LucideIcon> = {
 export function getToolIcon(toolName: string): LucideIcon {
   return toolIconMap[toolName] ?? Settings;
 }
+
+const subagentNames = new Set([
+  "wellness-analyst",
+  "physical-trainer",
+  "report-dispatcher",
+  "diet-planner",
+]);
+
+export function getToolLabel(toolName: string): string {
+  return subagentNames.has(toolName) ? "Subagent" : "Tool";
+}
