@@ -4,7 +4,7 @@ import {
   Terminal,
   HeartPulse,
   Dumbbell,
-  Send,
+  Mail,
   UtensilsCrossed,
   Settings,
   type LucideIcon,
@@ -14,9 +14,9 @@ const toolIconMap: Record<string, LucideIcon> = {
   ls: FolderOpen,
   read_file: FileText,
   execute: Terminal,
-  "wellness-analyst": HeartPulse,
+  "bmi-analyst": HeartPulse,
   "physical-trainer": Dumbbell,
-  "report-dispatcher": Send,
+  "email-dispatcher": Mail,
   "diet-planner": UtensilsCrossed,
 };
 
@@ -25,9 +25,9 @@ export function getToolIcon(toolName: string): LucideIcon {
 }
 
 const subagentNames = new Set([
-  "wellness-analyst",
+  "bmi-analyst",
   "physical-trainer",
-  "report-dispatcher",
+  "email-dispatcher",
   "diet-planner",
 ]);
 
