@@ -141,7 +141,7 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
             {isExpanded && (
               <div className="px-4 pb-4 border-t border-blue-700/20">
                 <div className="text-xs text-blue-200/60 mb-2">Arguments:</div>
-                <pre className="text-xs text-blue-100 bg-blue-950/30 p-2 rounded overflow-auto">
+                <pre className="text-xs text-blue-100 bg-blue-950/30 p-2 rounded overflow-y-auto max-h-60 whitespace-pre-wrap break-words">
                   {JSON.stringify(toolCall.args, null, 2)}
                 </pre>
               </div>
@@ -179,7 +179,7 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
             {resultExpanded && (
               <div className="px-3 pb-3 border-t border-green-700/20">
                 <div className="text-xs text-green-200/60 mb-2">Result:</div>
-                <pre className="text-xs text-green-100 bg-green-950/30 p-2 rounded overflow-auto max-h-40">
+                <pre className="text-xs text-green-100 bg-green-950/30 p-2 rounded overflow-y-auto max-h-60 whitespace-pre-wrap break-words">
                   {typeof event.content === 'string' ? event.content : JSON.stringify(event.content, null, 2)}
                 </pre>
               </div>
