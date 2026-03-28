@@ -124,13 +124,9 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
             >
               <div className="flex items-center gap-3">
                 <ToolIcon className="w-5 h-5 text-blue-400" />
-                <div className="text-left">
-                  <div className="text-sm font-medium text-blue-100">
-                    {toolCall.name}
-                  </div>
-                  <div className="text-xs text-blue-200/60">
-                    {getToolLabel(toolCall.name)}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-blue-100">{toolCall.name}</span>
+                  <span className="text-xs text-blue-200/60">• {getToolLabel(toolCall.name)}</span>
                 </div>
               </div>
               {isExpanded ? (

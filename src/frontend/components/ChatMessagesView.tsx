@@ -272,21 +272,16 @@ export function AIMessageRenderer({ message, latestTodos, skipWriteTodos }: AIMe
             >
               <div className="flex items-center gap-3">
                 <ToolIcon className="w-5 h-5 text-blue-400" />
-                <div className="text-left">
-                  <div className="text-sm font-medium text-blue-100 flex items-center gap-2">
-                    {toolCall.name}
-                    {
-                      (toolCall as any).content ? (
-                        <CheckCircle className="w-4 h-4 text-green-400" />
-                      ) : (
-                        <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
-                      )
-                    }
-                  </div>
-
-                  <div className="text-xs text-blue-200/60">
-                    {getToolLabel(toolCall.name)}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-blue-100">{toolCall.name}</span>
+                  <span className="text-xs text-blue-200/60">• {getToolLabel(toolCall.name)}</span>
+                  {
+                    (toolCall as any).content ? (
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                    ) : (
+                      <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
+                    )
+                  }
                 </div>
               </div>
               {expandedItems.has(`${message.id}-${idx}`) ? (
