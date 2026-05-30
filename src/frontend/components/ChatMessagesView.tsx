@@ -2,7 +2,11 @@ import type React from "react";
 import type { Message } from "@langchain/langgraph-sdk";
 import { ScrollArea } from "./ui/scroll-area";
 import { CheckCircle, ChevronDown, ChevronRight, Copy, CopyCheck, Loader2 } from "lucide-react";
-import { getToolIcon, getToolLabel } from "../lib/toolIcons";
+import {
+  getToolIcon,
+  getToolLabel,
+  resolveSubagentDisplayName,
+} from "../lib/toolIcons";
 import { InputForm } from "./InputForm";
 import { useState, ReactNode, useMemo } from "react";
 import { cn } from "../lib/utils";
@@ -263,48 +267,81 @@ export function AIMessageRenderer({ message, latestTodos, skipWriteTodos }: AIMe
 
       for (let idx = 0; idx < nonTodoToolCalls.length; idx++) {
         const toolCall = nonTodoToolCalls[idx];
-        const ToolIcon = getToolIcon(toolCall.name);
+        const args = (toolCall.args || {}) as Record<string, unknown>;
+        const subName = resolveSubagentDisplayName(toolCall.name, args);
+        const ToolIcon = getToolIcon(subName);
+        const headerTitle =
+          toolCall.name === "task" && typeof args.subagent_type === "string"
+            ? `task → ${args.subagent_type}`
+            : toolCall.name;
+        const taskDescription =
+          toolCall.name === "task" && typeof args.description === "string"
+            ? args.description
+            : null;
+        const preview =
+          taskDescription && taskDescription.length > 160
+            ? `${taskDescription.slice(0, 160)}…`
+            : taskDescription;
         elements.push(
           <div key={`${message.id || 'tc'}-${idx}`} className="bg-blue-900/20 border border-blue-700/30 rounded-lg overflow-hidden w-full">
             <button
               onClick={() => toggleExpand(`${message.id}-${idx}`)}
               className="w-full flex items-center justify-between p-4 hover:bg-blue-800/20 transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <ToolIcon className="w-5 h-5 text-blue-400" />
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-blue-100">{toolCall.name}</span>
-                  <span className="text-xs text-blue-200/60">• {getToolLabel(toolCall.name)}</span>
-                  {
-                    (toolCall as any).content ? (
-                      <CheckCircle className="w-4 h-4 text-green-400" />
-                    ) : (
-                      <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
-                    )
-                  }
+              <div className="flex items-center gap-3 min-w-0 flex-1 text-left">
+                <ToolIcon className="w-5 h-5 text-blue-400 shrink-0" />
+                <div className="flex flex-col min-w-0 gap-0.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-blue-100">{headerTitle}</span>
+                    <span className="text-xs text-blue-200/60">• {getToolLabel(toolCall.name, args)}</span>
+                    {
+                      (toolCall as any).content ? (
+                        <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
+                      ) : (
+                        <Loader2 className="w-4 h-4 text-blue-400 animate-spin shrink-0" />
+                      )
+                    }
+                  </div>
+                  {preview ? (
+                    <p className="text-xs text-blue-200/70 line-clamp-2 whitespace-pre-wrap break-words">
+                      {preview}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               {expandedItems.has(`${message.id}-${idx}`) ? (
-                <ChevronDown className="w-4 h-4 text-blue-400" />
+                <ChevronDown className="w-4 h-4 text-blue-400 shrink-0 ml-2" />
               ) : (
-                <ChevronRight className="w-4 h-4 text-blue-400" />
+                <ChevronRight className="w-4 h-4 text-blue-400 shrink-0 ml-2" />
               )}
             </button>
 
             {expandedItems.has(`${message.id}-${idx}`) && (
-              <div className="px-4 pb-4 border-t border-blue-700/20">
-                <div className="text-xs text-blue-200/60 mb-2">Arguments:</div>
-                <pre className="text-xs text-blue-100 bg-blue-950/30 p-2 rounded overflow-y-auto max-h-60 whitespace-pre-wrap break-words">
-                  {JSON.stringify(toolCall.args, null, 2)}
-                </pre>
-                <div className="text-xs text-blue-200/60 mb-2">
-                  {
-                    (toolCall as any).content ? 'Result:' : 'Running...:'
-                  }
+              <div className="px-4 pb-4 border-t border-blue-700/20 space-y-3">
+                {taskDescription ? (
+                  <div>
+                    <div className="text-xs text-blue-200/60 mb-1">Handoff / task description</div>
+                    <pre className="text-xs text-blue-100 bg-blue-950/30 p-2 rounded overflow-y-auto max-h-72 whitespace-pre-wrap break-words">
+                      {taskDescription}
+                    </pre>
+                  </div>
+                ) : null}
+                <div>
+                  <div className="text-xs text-blue-200/60 mb-2">Arguments (JSON)</div>
+                  <pre className="text-xs text-blue-100 bg-blue-950/30 p-2 rounded overflow-y-auto max-h-40 whitespace-pre-wrap break-words">
+                    {JSON.stringify(toolCall.args, null, 2)}
+                  </pre>
                 </div>
-                <pre className="text-xs text-green-100 bg-green-950/30 p-2 rounded overflow-y-auto max-h-60 whitespace-pre-wrap break-words">
-                  {JSON.stringify((toolCall as any).content, null, 2)}
-                </pre>
+                <div>
+                  <div className="text-xs text-blue-200/60 mb-2">
+                    {(toolCall as any).content ? "Subagent result" : "Running…"}
+                  </div>
+                  <pre className="text-xs text-green-100 bg-green-950/30 p-2 rounded overflow-y-auto max-h-96 whitespace-pre-wrap break-words">
+                    {typeof (toolCall as any).content === "string"
+                      ? (toolCall as any).content
+                      : JSON.stringify((toolCall as any).content, null, 2)}
+                  </pre>
+                </div>
               </div>
             )}
           </div>

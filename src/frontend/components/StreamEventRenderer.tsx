@@ -9,7 +9,11 @@ import {
   Play,
   Zap,
 } from "lucide-react";
-import { getToolIcon, getToolLabel } from "../lib/toolIcons";
+import {
+  getToolIcon,
+  getToolLabel,
+  resolveSubagentDisplayName,
+} from "../lib/toolIcons";
 import ReactMarkdown from "react-markdown";
 
 interface StreamEventRendererProps {
@@ -115,7 +119,13 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
         const isExpanded = expandedItems.has(event.id);
         return (
           event.tool_calls?.map((toolCall: ToolCall) => {
-            const ToolIcon = getToolIcon(toolCall.name);
+            const args = (toolCall.args || {}) as Record<string, unknown>;
+            const subName = resolveSubagentDisplayName(toolCall.name, args);
+            const ToolIcon = getToolIcon(subName);
+            const headerTitle =
+              toolCall.name === "task" && typeof args.subagent_type === "string"
+                ? `task → ${args.subagent_type}`
+                : toolCall.name;
             return (
             <div key={event.id} className="bg-blue-900/20 border border-blue-700/30 rounded-lg overflow-hidden">
             <button
@@ -125,8 +135,8 @@ export function StreamEventRenderer({ events, isLoading }: StreamEventRendererPr
               <div className="flex items-center gap-3">
                 <ToolIcon className="w-5 h-5 text-blue-400" />
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-blue-100">{toolCall.name}</span>
-                  <span className="text-xs text-blue-200/60">• {getToolLabel(toolCall.name)}</span>
+                  <span className="text-sm font-medium text-blue-100">{headerTitle}</span>
+                  <span className="text-xs text-blue-200/60">• {getToolLabel(toolCall.name, args)}</span>
                 </div>
               </div>
               {isExpanded ? (
