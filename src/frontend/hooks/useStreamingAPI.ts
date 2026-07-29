@@ -22,7 +22,6 @@ import {
 } from '@/redux/slices/chats';
 import { chatStorage } from '@/services/chatStorage';
 import { buildAgentApiUrl } from '@/lib/app-paths';
-import { selectActiveRules, selectMemories } from '@/redux/slices/personalization';
 import { selectAlwaysAllowedTools } from '@/redux/slices/userSettings';
 import { isSubAgentToolCall, extractSubAgentName } from '@/types/deep-agent';
 import type { HITLInterruptValue, InterruptInfo } from '@/types/deep-agent';
@@ -140,8 +139,6 @@ export function useStreamingAPI(threadId: string) {
   const chat = useAppSelector((state) => selectChatById(state, threadId));
   const streamingState = useAppSelector((state) => selectStreamingState(state, threadId));
 
-  const memories = useAppSelector(selectMemories);
-  const activeRules = useAppSelector(selectActiveRules);
   const alwaysAllowedTools = useAppSelector(selectAlwaysAllowedTools);
 
   const messages = useMemo(() => chat?.messages ?? EMPTY_MESSAGES, [chat?.messages]);
@@ -320,8 +317,6 @@ export function useStreamingAPI(threadId: string) {
         userId,
         apiUrl,
         token,
-        memories: memories.map((m) => m.content),
-        rules: activeRules.map((r) => r.content),
       };
 
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -578,7 +573,7 @@ export function useStreamingAPI(threadId: string) {
         await new Promise<void>((r) => setTimeout(r, computeRetryDelayMs(attempt + 1)));
       }
     },
-    [dispatch, threadId, memories, activeRules, handleStreamActivityStatus],
+    [dispatch, threadId, handleStreamActivityStatus],
   );
 
   /**
@@ -636,8 +631,6 @@ export function useStreamingAPI(threadId: string) {
         userId,
         apiUrl,
         token,
-        memories: memories.map((m) => m.content),
-        rules: activeRules.map((r) => r.content),
         resume: true,
         resumeDecisions: decisions,
       };
@@ -708,7 +701,7 @@ export function useStreamingAPI(threadId: string) {
 
       await manager.stream(resumeRequest, callbacks);
     },
-    [dispatch, threadId, memories, activeRules],
+    [dispatch, threadId],
   );
 
   const resumeInterrupt = useCallback(
@@ -737,8 +730,6 @@ export function useStreamingAPI(threadId: string) {
         apiUrl,
         token,
         resume: true,
-        memories: memories.map((m) => m.content),
-        rules: activeRules.map((r) => r.content),
       };
 
       let resumeStreamHadInterrupt = false;
@@ -810,7 +801,7 @@ export function useStreamingAPI(threadId: string) {
         void manager.stream(streamRequest, callbacks);
       });
     },
-    [dispatch, threadId, memories, activeRules],
+    [dispatch, threadId],
   );
 
   const stop = useCallback(() => {
