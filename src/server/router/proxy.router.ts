@@ -657,6 +657,11 @@ async function proxyRoutes(fastify: FastifyInstance) {
         headers['X-Refresh-Token'] = refreshToken;
       }
 
+      const sessionUser = (request.session as any)?.user;
+      if (sessionUser) {
+        headers['X-User-ID'] = sessionUser.preferred_username || sessionUser.sub || sessionUser.email || '';
+      }
+
       try {
         const queryString = buildForwardedQueryString(request.query as Record<string, unknown>);
         const agentUrl = `${getAgentHost()}/${path}${queryString}`;

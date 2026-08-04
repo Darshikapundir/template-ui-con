@@ -7,14 +7,14 @@ import {
   removeRule,
   fetchRules,
   selectRules,
-  selectPersonalizationLoading,
+  selectRulesLoading,
   selectPersonalizationError,
 } from '../../redux/slices/personalization';
 
 export function RulesEditor() {
   const dispatch = useAppDispatch();
   const rules = useAppSelector(selectRules);
-  const loading = useAppSelector(selectPersonalizationLoading);
+  const loading = useAppSelector(selectRulesLoading);
   const error = useAppSelector(selectPersonalizationError);
   const [draft, setDraft] = useState('');
 
@@ -41,8 +41,7 @@ export function RulesEditor() {
       <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
         <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
         <p className="text-xs text-amber-400/80">
-          Custom rules shape how the agent responds. They apply to every conversation
-          unless individually disabled.
+          User rules shape how the agent responds. They apply to every conversation.
         </p>
       </div>
 

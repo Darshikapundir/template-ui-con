@@ -13,8 +13,8 @@ type TabId = 'profile' | 'memories' | 'rules' | 'appearance' | 'tool-approvals';
 
 const TABS: { id: TabId; label: string; icon: typeof User }[] = [
   { id: 'profile', label: 'Profile', icon: User },
-  { id: 'memories', label: 'Memories', icon: Brain },
-  { id: 'rules', label: 'Custom Rules', icon: ScrollText },
+  { id: 'rules', label: 'User Rules', icon: ScrollText },
+  { id: 'memories', label: 'Your Memories', icon: Brain },
   { id: 'appearance', label: 'Appearance', icon: Palette },
   { id: 'tool-approvals', label: 'Tool Approvals', icon: ShieldCheck },
 ];
